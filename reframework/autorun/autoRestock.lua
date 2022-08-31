@@ -522,3 +522,69 @@ re.on_draw_ui(function()
         json.dump_file("AutoRestock.json", config)
     end
 end)
+
+-------------------------Custom Mod UI COOLNESS----------------------------------
+
+--no idea how this works but google to the rescue
+--can use this to check if the api is available and do an alternative to avoid complaints from users
+function IsModuleAvailable(name)
+  if package.loaded[name] then
+    return true
+  else
+    for _, searcher in ipairs(package.searchers or package.loaders) do
+      local loader = searcher(name)
+      if type(loader) == 'function' then
+        package.preload[name] = loader
+        return true
+      end
+    end
+    return false
+  end
+end
+
+
+local apiPackageName = "ModOptionsMenu.ModMenuApi";
+local modUI = nil;
+local DrawSlider;
+
+if IsModuleAvailable(apiPackageName) then
+	modUI = require(apiPackageName);
+end
+
+if modUI then
+	local name = "AutoRestock";
+	local description = "It does what it says on the tin.";
+	modUI.OnMenu(name, description, function()
+            local changed = false
+	    local configChanged = false
+
+            modUI.Header("トグル");
+            changed, config.Enabled = modUI.Toggle("有効無効", config.Enabled, "有効かどうか")
+            configChanged = configChanged or changed
+
+            modUI.Header("装備マイセット");
+            for i = 1, 112, 1 do
+                local loadoutIndex = i - 1
+                local name = GetEquipmentLoadoutName(loadoutIndex)
+
+                local isUsing = EquipmentLoadoutIsNotEmpty(loadoutIndex)
+                if name and isUsing then
+                    local same = EquipmentLoadoutIsEquipped(loadoutIndex)
+                    local msg = ""
+                    if same then msg = " (装備中)" end
+                    local itemLoadoutName = ""
+                    if config.EquipLoadoutConfig[i] > -1 then
+                        local itemloadout = GetItemLoadout(config.EquipLoadoutConfig[i])
+                        itemLoadoutName = "／" .. itemloadout:call("get_Name")
+                    end
+
+                    changed, config.EquipLoadoutConfig[i] = modUI.Slider(name .. msg .. itemLoadoutName, config.EquipLoadoutConfig[i], -1, 16, GetLoadoutItemLoadoutIndex(loadoutIndex))
+                    configChanged = configChanged or changed
+                end
+            end
+
+	    if configChanged then
+	        json.dump_file("AutoRestock.json", config)
+	    end
+	end);
+end
