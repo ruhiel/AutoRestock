@@ -85,6 +85,10 @@ if config.Language == nil or FindIndex(Languages, config.Language) == nil then
     config.Language = "en-US"
 end
 
+if config.MaxItemLoadoutIndex == nil then
+    config.MaxItemLoadoutIndex = 0
+end
+
 re.on_config_save(function()
     json.dump_file("AutoRestock.json", config)
 end)
@@ -165,67 +169,35 @@ local lastHitLoadout = -1 -- Cached loadout, avoid unnecessary search
 local LocalizedStrings = {
     ["en-US"] = {
         WeaponNames = {
-            [0] = "Great Sword",
-            [1] = "Swtich Axe",
-            [2] = "Long Sword",
-            [3] = "Light Bowgun",
-            [4] = "Heavy Bowgun",
-            [5] = "Hammer",
-            [6] = "Gunlance",
-            [7] = "Lance",
-            [8] = "Sword & Shield",
-            [9] = "Dual Blades",
-            [10] = "Hunting Horn",
-            [11] = "Charge Blade",
-            [12] = "Insect Glaive",
-            [13] = "Bow",
-        },
-        UseDefaultItemSet = "Use Default Setting",
-        WeaponTypeNotSetUseDefault = "%s not set, use default setting %s",
-        UseWeaponTypeItemSet = "Use %s setting: %s",
-
-        FromLoadout = "Restock for equipment loadout [<COL YEL>%s</COL>] from item loadout [<COL YEL>%s</COL>]",
-        MismatchLoadout = "Current equipment doesn't match any equipment loadout.\n",
-        FromWeaponType = "Restock for weapon type [<COL YEL>%s</COL>] from item loadout [<COL YEL>%s</COL>].",
-        MismatchWeaponType = "Current equipment doesn't match any equipment loadout, and weapon type [<COL YEL>%s</COL>] has no settings.\n",
-        FromDefault = "Restock from default item loadout [<COL YEL>%s</COL>].",
-        OutOfStock = "Restock [<COL YEL>%s</COL>] cancelled due to <COL RED>out of stock</COL>.",
-
-        PaletteNilError = "<COL RED>ERROR</COL>: Radial set is nil.",
-        PaletteApplied = "Radial set [<COL YEL>%s</COL>] applied.",
-        PaletteListEmpty = "Radial set list is empty, skipped.",
-    },
-    ["zh-CN"] = {
-        WeaponNames = {
-            [0] = "大剑",
-            [1] = "斩斧",
+            [0] = "大剣",
+            [1] = "スラッシュアックス",
             [2] = "太刀",
-            [3] = "轻弩",
-            [4] = "重弩",
-            [5] = "大锤",
-            [6] = "铳枪",
-            [7] = "长枪",
-            [8] = "片手",
-            [9] = "双刀",
-            [10] = "笛子",
-            [11] = "盾斧",
+            [3] = "ライトボウガン",
+            [4] = "ヘビィボウガン",
+            [5] = "ハンマー",
+            [6] = "ガンランス",
+            [7] = "ランス",
+            [8] = "片手剣",
+            [9] = "双剣",
+            [10] = "狩猟笛",
+            [11] = "チャージアックス",
             [12] = "操虫棍",
             [13] = "弓",
         },
-        UseDefaultItemSet = "使用默认设置",
-        WeaponTypeNotSetUseDefault = "%s无设定，使用默认设置：%s",
-        UseWeaponTypeItemSet = "使用%s设置：%s",
+        UseDefaultItemSet = "デフォルト設定を適用します。",
+        WeaponTypeNotSetUseDefault = "%s は設定されていません。デフォルト設定を適用します。%s",
+        UseWeaponTypeItemSet = "%sの設定を適用します。%s",
 
-        FromLoadout = "已从个人组合[<COL YEL>%s</COL>]指定的[<COL YEL>%s</COL>]补充道具。",
-        MismatchLoadout = "当前装备不匹配个人组合。\n",
-        FromWeaponType = "已从武器类型[<COL YEL>%s</COL>]指定的[<COL YEL>%s</COL>]补充道具。",
-        MismatchWeaponType = "当前装备不匹配个人组合，且武器类型[<COL YEL>%s</COL>]没有指定设置。\n",
-        FromDefault = "已从默认设置[<COL YEL>%s</COL>]补充道具。",
-        OutOfStock = "因<COL RED>库存不足</COL>,从[<COL YEL>%s</COL>]补充道具取消。",
+        FromLoadout = "マイセット [<COL YEL>%s</COL>] に対応するアイテムマイセット [<COL YEL>%s</COL>] を適用しました。",
+        MismatchLoadout = "現在の武器種にマッチしたアイテムマイセットが見つかりませんでした。\n",
+        FromWeaponType = "[<COL YEL>%s</COL>] に対応するアイテムマイセット [<COL YEL>%s</COL>] を適用しました。",
+        MismatchWeaponType = "[<COL YEL>%s</COL>] に対応するアイテムマイセットが見つかりませんでした。\n",
+        FromDefault = "デフォルトのマイセット [<COL YEL>%s</COL>] を適用しました。",
+        OutOfStock = "<COL RED>在庫不足</COL>のため、マイセット [<COL YEL>%s</COL>] の適用をキャンセルしました。",
 
-        PaletteNilError = "<COL RED>发生了错误</COL>：轮盘组合为空。",
-        PaletteApplied = "使用了轮盘组合[<COL YEL>%s</COL>]。",
-        PaletteListEmpty = "没有轮盘组合，不应用。",
+        PaletteNilError = "<COL RED>エラー</COL>。パレットセットが設定されていません。",
+        PaletteApplied = "パレットセット [<COL YEL>%s</COL>] を適用しました。",
+        PaletteListEmpty = "パレットセットが空のため、スキップしました。",
     }
 }
 
@@ -542,7 +514,6 @@ function IsModuleAvailable(name)
   end
 end
 
-
 local apiPackageName = "ModOptionsMenu.ModMenuApi";
 local modUI = nil;
 local DrawSlider;
@@ -558,8 +529,12 @@ if modUI then
             local changed = false
 	    local configChanged = false
 
-            modUI.Header("トグル");
+            modUI.Header("メイン設定");
             changed, config.Enabled = modUI.Toggle("有効無効", config.Enabled, "有効かどうか")
+            configChanged = configChanged or changed
+
+            local itemLoadoutName = GetItemLoadoutName(config.MaxItemLoadoutIndex)
+            changed, config.MaxItemLoadoutIndex = modUI.Slider(itemLoadoutName, config.MaxItemLoadoutIndex, -1, 39, "アイテムマイセット終端")
             configChanged = configChanged or changed
 
             modUI.Header("装備マイセット");
@@ -578,7 +553,7 @@ if modUI then
                         itemLoadoutName = "／" .. itemloadout:call("get_Name")
                     end
 
-                    changed, config.EquipLoadoutConfig[i] = modUI.Slider(name .. msg .. itemLoadoutName, config.EquipLoadoutConfig[i], -1, 16, GetLoadoutItemLoadoutIndex(loadoutIndex))
+                    changed, config.EquipLoadoutConfig[i] = modUI.Slider(name .. msg .. itemLoadoutName, config.EquipLoadoutConfig[i], -1, config.MaxItemLoadoutIndex, GetLoadoutItemLoadoutIndex(loadoutIndex))
                     configChanged = configChanged or changed
                 end
             end
