@@ -537,6 +537,19 @@ if modUI then
             changed, config.MaxItemLoadoutIndex = modUI.Slider(itemLoadoutName, config.MaxItemLoadoutIndex, -1, 39, "アイテムマイセット終端")
             configChanged = configChanged or changed
 
+            modUI.Header("武器種デフォルトマイセット");
+            for i = 1, 14, 1 do
+                local weaponType = i - 1
+                local weaponName = GetWeaponName(weaponType)
+                local itemLoadoutName = ""
+                if config.WeaponTypeConfig[i] > -1 then
+                    local itemloadout = GetItemLoadout(config.WeaponTypeConfig[i])
+                    itemLoadoutName = "／" .. itemloadout:call("get_Name")
+                end
+                changed, config.WeaponTypeConfig[i] = modUI.Slider(weaponName .. itemLoadoutName, config.WeaponTypeConfig[i], -1, config.MaxItemLoadoutIndex, GetWeaponTypeItemLoadoutName(weaponType))
+                configChanged = configChanged or changed
+            end
+
             modUI.Header("装備マイセット");
             for i = 1, 112, 1 do
                 local loadoutIndex = i - 1
