@@ -16,13 +16,6 @@ local font = imgui.load_font(FONT_NAME, FONT_SIZE, CJK_GLYPH_RANGES)
 ----------- Helper Functions ----------------
 local ChatManager = sdk.get_managed_singleton("snow.gui.ChatManager")
 
-local function SendMessage(text)
-    if ChatManager == nil then
-        ChatManager = sdk.get_managed_singleton("snow.gui.ChatManager")
-    end
-    ChatManager:call("reqAddChatInfomation", text, 2289944406)
-end
-
 local function FindIndex(table, value)
     for i = 1, #table do
         if table[i] == value then
@@ -61,6 +54,9 @@ local config = json.load_file("AutoRestock.json") or {}
 if config.Enabled == nil then
     config.Enabled = true
 end
+if config.EnableNotification == nil then
+    config.EnableNotification = true
+end
 config.DefaultSet = config.DefaultSet or 1
 
 if config.WeaponTypeConfig == nil then
@@ -92,6 +88,14 @@ end
 re.on_config_save(function()
     json.dump_file("AutoRestock.json", config)
 end)
+
+local function SendMessage(text)
+    if not config.EnableNotification then return end
+    if ChatManager == nil then
+        ChatManager = sdk.get_managed_singleton("snow.gui.ChatManager")
+    end
+    ChatManager:call("reqAddChatInfomation", text, 2289944406)
+end
 
 ----------- Item Loadout Management ----------
 local SystemDataManager = sdk.get_managed_singleton("snow.data.SystemDataManager")
@@ -437,7 +441,7 @@ re.on_frame(function()
     if EquipDataManager == nil then EquipDataManager = sdk.get_managed_singleton("snow.data.EquipDataManager") end
     if ShortcutManager == nil then ShortcutManager = sdk.get_managed_singleton("snow.data.CustomShortcutSystem") end
     if PlayerManager == nil then PlayerManager = sdk.get_managed_singleton("snow.player.PlayerManager") end
-    
+
     if SystemDataManager == nil then SystemDataManager = sdk.get_managed_singleton("snow.data.SystemDataManager") end
     if ShortcutManager == nil and SystemDataManager ~= nil then
         ShortcutManager = SystemDataManager:call("getCustomShortcutSystem")
@@ -451,6 +455,7 @@ re.on_draw_ui(function()
     if imgui.tree_node("AutoRestock") then
         if ChatManager ~= nil and DataManager ~= nil and EquipDataManager ~= nil then
             _, config.Enabled = imgui.checkbox("Enabled", config.Enabled)
+            _, config.EnableNotification = imgui.checkbox("EnableNotification", config.EnableNotification)
 
             local langIdx = FindIndex(Languages, config.Language)
             configChanged, langIdx = imgui.combo("Language", langIdx, Languages)
