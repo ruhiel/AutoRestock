@@ -538,6 +538,9 @@ if modUI then
             changed, config.Enabled = modUI.Toggle("有効無効", config.Enabled, "有効かどうか")
             configChanged = configChanged or changed
 
+            changed, config.EnableNotification = modUI.Toggle("通知の有効化", config.EnableNotification, "通知を行うかどうか")
+            configChanged = configChanged or changed
+
             local itemLoadoutName = GetItemLoadoutName(config.MaxItemLoadoutIndex)
             changed, config.MaxItemLoadoutIndex = modUI.Slider(itemLoadoutName, config.MaxItemLoadoutIndex, -1, 39, "アイテムマイセット終端")
             configChanged = configChanged or changed
