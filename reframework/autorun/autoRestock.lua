@@ -193,7 +193,7 @@ local LocalizedStrings = {
         UseWeaponTypeItemSet = "%sの設定を適用します。%s",
 
         FromLoadout = "マイセット [<COL YEL>%s</COL>] に対応するアイテムマイセット [<COL YEL>%s</COL>] を適用しました。",
-        MismatchLoadout = "現在の武器種にマッチしたアイテムマイセットが見つかりませんでした。\n",
+        MismatchLoadout = "現在のマイセットに対応するアイテムマイセットが見つかりませんでした。\n",
         FromWeaponType = "[<COL YEL>%s</COL>] に対応するアイテムマイセット [<COL YEL>%s</COL>] を適用しました。",
         MismatchWeaponType = "[<COL YEL>%s</COL>] に対応するアイテムマイセットが見つかりませんでした。\n",
         FromDefault = "デフォルトのマイセット [<COL YEL>%s</COL>] を適用しました。",
