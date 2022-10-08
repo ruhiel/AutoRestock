@@ -48,7 +48,7 @@ local CycleTypeMap = GetEnumMap("snow.data.CustomShortcutSystem.SycleTypes")
 
 
 ------------- Config Management --------------
-local Languages = {"en-US", "zh-CN"}
+local Languages = {"en-US", "zh-CN", "ko-KR", "ja-JP"}
 
 local config = json.load_file("AutoRestock.json") or {}
 if config.Enabled == nil then
@@ -79,10 +79,6 @@ end
 
 if config.Language == nil or FindIndex(Languages, config.Language) == nil then
     config.Language = "en-US"
-end
-
-if config.MaxItemLoadoutIndex == nil then
-    config.MaxItemLoadoutIndex = 0
 end
 
 re.on_config_save(function()
@@ -173,6 +169,102 @@ local lastHitLoadout = -1 -- Cached loadout, avoid unnecessary search
 local LocalizedStrings = {
     ["en-US"] = {
         WeaponNames = {
+            [0] = "Great Sword",
+            [1] = "Swtich Axe",
+            [2] = "Long Sword",
+            [3] = "Light Bowgun",
+            [4] = "Heavy Bowgun",
+            [5] = "Hammer",
+            [6] = "Gunlance",
+            [7] = "Lance",
+            [8] = "Sword & Shield",
+            [9] = "Dual Blades",
+            [10] = "Hunting Horn",
+            [11] = "Charge Blade",
+            [12] = "Insect Glaive",
+            [13] = "Bow",
+        },
+        UseDefaultItemSet = "Use Default Setting",
+        WeaponTypeNotSetUseDefault = "%s not set, use default setting %s",
+        UseWeaponTypeItemSet = "Use %s setting: %s",
+
+        FromLoadout = "Restock for equipment loadout [<COL YEL>%s</COL>] from item loadout [<COL YEL>%s</COL>]",
+        MismatchLoadout = "Current equipment doesn't match any equipment loadout.\n",
+        FromWeaponType = "Restock for weapon type [<COL YEL>%s</COL>] from item loadout [<COL YEL>%s</COL>].",
+        MismatchWeaponType = "Current equipment doesn't match any equipment loadout, and weapon type [<COL YEL>%s</COL>] has no settings.\n",
+        FromDefault = "Restock from default item loadout [<COL YEL>%s</COL>].",
+        OutOfStock = "Restock [<COL YEL>%s</COL>] cancelled due to <COL RED>out of stock</COL>.",
+
+        PaletteNilError = "<COL RED>ERROR</COL>: Radial set is nil.",
+        PaletteApplied = "Radial set [<COL YEL>%s</COL>] applied.",
+        PaletteListEmpty = "Radial set list is empty, skipped.",
+    },
+    ["zh-CN"] = {
+        WeaponNames = {
+            [0] = "大剑",
+            [1] = "斩斧",
+            [2] = "太刀",
+            [3] = "轻弩",
+            [4] = "重弩",
+            [5] = "大锤",
+            [6] = "铳枪",
+            [7] = "长枪",
+            [8] = "片手",
+            [9] = "双刀",
+            [10] = "笛子",
+            [11] = "盾斧",
+            [12] = "操虫棍",
+            [13] = "弓",
+        },
+        UseDefaultItemSet = "使用默认设置",
+        WeaponTypeNotSetUseDefault = "%s无设定，使用默认设置：%s",
+        UseWeaponTypeItemSet = "使用%s设置：%s",
+
+        FromLoadout = "已从个人组合[<COL YEL>%s</COL>]指定的[<COL YEL>%s</COL>]补充道具。",
+        MismatchLoadout = "当前装备不匹配个人组合。\n",
+        FromWeaponType = "已从武器类型[<COL YEL>%s</COL>]指定的[<COL YEL>%s</COL>]补充道具。",
+        MismatchWeaponType = "当前装备不匹配个人组合，且武器类型[<COL YEL>%s</COL>]没有指定设置。\n",
+        FromDefault = "已从默认设置[<COL YEL>%s</COL>]补充道具。",
+        OutOfStock = "因<COL RED>库存不足</COL>,从[<COL YEL>%s</COL>]补充道具取消。",
+
+        PaletteNilError = "<COL RED>发生了错误</COL>：轮盘组合为空。",
+        PaletteApplied = "使用了轮盘组合[<COL YEL>%s</COL>]。",
+        PaletteListEmpty = "没有轮盘组合，不应用。",
+    },
+    ["ko-KR"] = {
+        WeaponNames = {
+            [0] = "대검",
+            [1] = "슬래시엑스",
+            [2] = "태도",
+            [3] = "라이트보우건",
+            [4] = "헤비보우건",
+            [5] = "해머",
+            [6] = "건랜스",
+            [7] = "랜스",
+            [8] = "한손검",
+            [9] = "쌍검",
+            [10] = "수렵적",
+            [11] = "차지엑스",
+            [12] = "조충곤",
+            [13] = "활",
+        },
+        UseDefaultItemSet = "기본 설정",
+        WeaponTypeNotSetUseDefault = "%s 무기의 설정이 없어서，기본 설정 %s 적용",
+        UseWeaponTypeItemSet = "%s의 설정：%s",
+
+        FromLoadout = "장비 프리셋 [<COL YEL>%s</COL>]에 따라 아이템 프리셋[<COL YEL>%s</COL>] 적용",
+        MismatchLoadout = "선택한 장비와 일치하는 프리셋이 없습니다\n",
+        FromWeaponType = "선택 무기 [<COL YEL>%s</COL>]에 따라 아이템 프리셋 [<COL YEL>%s</COL>] 적용",
+        MismatchWeaponType = "현재 장비와 일치하는 프리셋이 없습니다. [<COL YEL>%s</COL>]의 설정이 없습니다\n",
+        FromDefault = "기본 아이템 프리셋 [<COL YEL>%s</COL>] 적용",
+        OutOfStock = "선택한 아이템 프리셋 <COL RED>물품 부족</COL>,[<COL YEL>%s</COL>] 프리셋 적용을 취소합니다",
+
+        PaletteNilError = "<COL RED>오류</COL>：팔레트 미설정",
+        PaletteApplied = "팔레트[<COL YEL>%s</COL>] 적용",
+        PaletteListEmpty = "팔레트 설정이 비어있습니다",
+    },
+    ["ja-JP"] = {
+        WeaponNames = {
             [0] = "大剣",
             [1] = "スラッシュアックス",
             [2] = "太刀",
@@ -189,8 +281,8 @@ local LocalizedStrings = {
             [13] = "弓",
         },
         UseDefaultItemSet = "デフォルト設定を適用します。",
-        WeaponTypeNotSetUseDefault = "%s は設定されていません。デフォルト設定を適用します。%s",
-        UseWeaponTypeItemSet = "%sの設定を適用します。%s",
+        WeaponTypeNotSetUseDefault = "武器種 %s は設定されていません。デフォルト設定を適用します。%s",
+        UseWeaponTypeItemSet = "武器種 %s の設定: %s",
 
         FromLoadout = "マイセット [<COL YEL>%s</COL>] に対応するアイテムマイセット [<COL YEL>%s</COL>] を適用しました。",
         MismatchLoadout = "現在のマイセットに対応するアイテムマイセットが見つかりませんでした。\n",
@@ -247,7 +339,7 @@ local function FromDefault(itemName, mismatch)
 end
 
 local function OutOfStock(itemName)
-    return string.format(Localized().FromDefault, itemName)
+    return string.format(Localized().OutOfStock, itemName)
 end
 
 local function PaletteNilError()
@@ -410,10 +502,21 @@ end
 -- On apply equipment loadout
 sdk.hook(
     sdk.find_type_definition("snow.data.EquipDataManager"):get_method("applyEquipMySet(System.Int32)"),
-    --snow.equip.PlEquipMySetData
     function(args)
+        -- TU2 breaks this
         local idx = sdk.to_int64(args[3])
         Restock(idx)
+    end
+)
+
+sdk.hook(
+    sdk.find_type_definition("snow.data.EquipDataManager"):get_method("applyEquipMySet(snow.equip.PlEquipMySetData)"),
+    --snow.equip.PlEquipMySetData
+    function(args)
+
+    end, function (retval)
+        Restock()
+        return retval
     end
 )
 
@@ -499,88 +602,3 @@ re.on_draw_ui(function()
         json.dump_file("AutoRestock.json", config)
     end
 end)
-
--------------------------Custom Mod UI COOLNESS----------------------------------
-
---no idea how this works but google to the rescue
---can use this to check if the api is available and do an alternative to avoid complaints from users
-function IsModuleAvailable(name)
-  if package.loaded[name] then
-    return true
-  else
-    for _, searcher in ipairs(package.searchers or package.loaders) do
-      local loader = searcher(name)
-      if type(loader) == 'function' then
-        package.preload[name] = loader
-        return true
-      end
-    end
-    return false
-  end
-end
-
-local apiPackageName = "ModOptionsMenu.ModMenuApi";
-local modUI = nil;
-local DrawSlider;
-
-if IsModuleAvailable(apiPackageName) then
-	modUI = require(apiPackageName);
-end
-
-if modUI then
-	local name = "AutoRestock";
-	local description = "It does what it says on the tin.";
-	modUI.OnMenu(name, description, function()
-            local changed = false
-	    local configChanged = false
-
-            modUI.Header("メイン設定");
-            changed, config.Enabled = modUI.Toggle("有効無効", config.Enabled, "有効かどうか")
-            configChanged = configChanged or changed
-
-            changed, config.EnableNotification = modUI.Toggle("通知の有効化", config.EnableNotification, "通知を行うかどうか")
-            configChanged = configChanged or changed
-
-            local itemLoadoutName = GetItemLoadoutName(config.MaxItemLoadoutIndex)
-            changed, config.MaxItemLoadoutIndex = modUI.Slider(itemLoadoutName, config.MaxItemLoadoutIndex, -1, 39, "アイテムマイセット終端")
-            configChanged = configChanged or changed
-
-            modUI.Header("武器種デフォルトマイセット");
-            for i = 1, 14, 1 do
-                local weaponType = i - 1
-                local weaponName = GetWeaponName(weaponType)
-                local itemLoadoutName = ""
-                if config.WeaponTypeConfig[i] > -1 then
-                    local itemloadout = GetItemLoadout(config.WeaponTypeConfig[i])
-                    itemLoadoutName = "／" .. itemloadout:call("get_Name")
-                end
-                changed, config.WeaponTypeConfig[i] = modUI.Slider(weaponName .. itemLoadoutName, config.WeaponTypeConfig[i], -1, config.MaxItemLoadoutIndex, GetWeaponTypeItemLoadoutName(weaponType))
-                configChanged = configChanged or changed
-            end
-
-            modUI.Header("装備マイセット");
-            for i = 1, 112, 1 do
-                local loadoutIndex = i - 1
-                local name = GetEquipmentLoadoutName(loadoutIndex)
-
-                local isUsing = EquipmentLoadoutIsNotEmpty(loadoutIndex)
-                if name and isUsing then
-                    local same = EquipmentLoadoutIsEquipped(loadoutIndex)
-                    local msg = ""
-                    if same then msg = " (装備中)" end
-                    local itemLoadoutName = ""
-                    if config.EquipLoadoutConfig[i] > -1 then
-                        local itemloadout = GetItemLoadout(config.EquipLoadoutConfig[i])
-                        itemLoadoutName = "／" .. itemloadout:call("get_Name")
-                    end
-
-                    changed, config.EquipLoadoutConfig[i] = modUI.Slider(name .. msg .. itemLoadoutName, config.EquipLoadoutConfig[i], -1, config.MaxItemLoadoutIndex, GetLoadoutItemLoadoutIndex(loadoutIndex))
-                    configChanged = configChanged or changed
-                end
-            end
-
-	    if configChanged then
-	        json.dump_file("AutoRestock.json", config)
-	    end
-	end);
-end
